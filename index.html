@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#eaf6ed">
+<title>小花园 · Tiny Garden</title>
+<style>
+:root{--ink:#40594a;--muted:#799080;--cream:#fffdf7;--green:#78ad82;--green-dark:#578764;--pink:#f3a7ae;--shadow:0 14px 38px #627e6720}
+*{box-sizing:border-box}body{margin:0;min-height:100svh;background:linear-gradient(180deg,#e9f6f2,#f8f5e9 75%,#f5f1df);color:var(--ink);font-family:ui-rounded,"Arial Rounded MT Bold",system-ui,-apple-system,"Microsoft YaHei",sans-serif;display:flex;justify-content:center}
+button{font:inherit;color:inherit;border:0;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}button:active{transform:scale(.94)}button:focus-visible{outline:3px solid #e9b77d;outline-offset:3px}
+.app{width:min(100%,440px);min-height:100svh;padding:calc(16px + env(safe-area-inset-top)) 20px calc(18px + env(safe-area-inset-bottom));display:flex;flex-direction:column}
+.topbar{height:54px;display:flex;align-items:center;justify-content:space-between}.brand{font-size:15px;font-weight:800;letter-spacing:.04em;color:#6a8c73}.seed-count{display:flex;align-items:center;gap:7px;background:#ffffffb8;border:1px solid #fff;padding:9px 13px;border-radius:99px;font-weight:800;box-shadow:0 4px 12px #829b8412}.seed-icon{font-size:17px}.top-actions{display:flex;gap:8px}.pill{height:44px;padding:0 15px;border-radius:99px;background:#ffffffc9;box-shadow:0 4px 12px #829b8412;font-weight:700;color:#66816d}.icon-btn{width:44px;height:44px;border-radius:50%;background:#ffffffc9;font-size:18px}
+.scene{flex:1;min-height:410px;max-height:610px;position:relative;margin:14px -4px 10px;border-radius:34px;overflow:hidden;background:linear-gradient(180deg,#d8eff0 0%,#e8f5e9 60%,#d9ebd2 100%);box-shadow:inset 0 0 0 1px #ffffff80,var(--shadow);display:grid;place-items:center}
+.sun{position:absolute;width:58px;height:58px;border-radius:50%;background:#fff1b8;right:12%;top:11%;box-shadow:0 0 36px #fff2b866}.cloud{position:absolute;width:82px;height:25px;background:#ffffff9c;border-radius:50px;top:23%;left:10%;filter:blur(.2px)}.cloud:before,.cloud:after{content:"";position:absolute;border-radius:50%;background:inherit}.cloud:before{width:33px;height:33px;left:14px;top:-13px}.cloud:after{width:27px;height:27px;left:39px;top:-8px}
+.hill{position:absolute;bottom:-48px;width:125%;height:180px;border-radius:50% 50% 0 0;background:#b9d8b0;left:-14%}.hill.back{bottom:-70px;left:18%;background:#c9e1bd;opacity:.8}
+.garden{position:relative;width:100%;height:100%;display:grid;place-items:center;z-index:2}.plant-wrap{position:absolute;width:210px;height:255px;bottom:114px;display:grid;place-items:end center;transform-origin:bottom center;transition:transform .45s cubic-bezier(.2,1.5,.5,1);z-index:3}.plant-wrap.pop{animation:pop .65s cubic-bezier(.2,1.5,.5,1)}.plant-wrap.sway{animation:sway .55s ease-in-out}.plant-svg{width:100%;height:100%;overflow:visible}.pot{position:absolute;width:168px;height:115px;bottom:62px;z-index:4;filter:drop-shadow(0 10px 6px #74866a24)}.ground{position:absolute;bottom:127px;width:230px;height:22px;border-radius:50%;background:#83ac7b66;z-index:2}
+.plant-hidden{opacity:0}.stem{fill:none;stroke:#5e9c69;stroke-width:9;stroke-linecap:round}.leaf{fill:#83bd83;stroke:#5e9c69;stroke-width:2}.seed{fill:#956747}.soil{fill:#795d48}.sprout{fill:none;stroke:#61a574;stroke-width:8;stroke-linecap:round}.bud{fill:#e79ca4;stroke:#cf7e89;stroke-width:3}
+.flower{transform-origin:100px 77px}.petal{transform-box:fill-box;transform-origin:center bottom}.open .petal{animation:petalOpen .7s cubic-bezier(.2,1.5,.5,1) both}.special-glow{filter:drop-shadow(0 0 12px #fff08c) drop-shadow(0 0 24px #ffdb75)}
+@keyframes pop{0%{transform:scale(.65)}65%{transform:scale(1.12)}100%{transform:scale(1)}}@keyframes sway{0%,100%{transform:rotate(0)}25%{transform:rotate(-5deg)}70%{transform:rotate(4deg)}}@keyframes petalOpen{0%{transform:scale(.05) rotate(-35deg)}80%{transform:scale(1.16) rotate(5deg)}100%{transform:scale(1) rotate(0)}}@keyframes floatUp{to{transform:translate(var(--dx),-95px) rotate(220deg);opacity:0}}
+.droplet{position:absolute;z-index:8;font-size:20px;animation:drop .7s ease-in forwards}@keyframes drop{from{transform:translateY(-60px);opacity:0}35%{opacity:1}to{transform:translateY(30px);opacity:0}}
+.particles{position:absolute;inset:20% 10% 30%;pointer-events:none;z-index:7}.particle{position:absolute;font-size:13px;animation:floatUp 1.8s ease-out forwards}
+.watering-can{position:absolute;right:14%;top:42%;font-size:38px;z-index:8;opacity:0;transform:rotate(-35deg)}.watering .watering-can{animation:pour .8s ease-in-out}@keyframes pour{0%{opacity:0;transform:translate(15px,-20px) rotate(-10deg)}20%{opacity:1;transform:rotate(22deg)}75%{opacity:1;transform:rotate(22deg)}100%{opacity:0;transform:translate(10px,20px) rotate(-25deg)}}
+.caption{text-align:center;min-height:56px;padding:9px 10px 4px;font-size:16px;font-weight:700;line-height:1.5}.caption small{display:block;font-size:12px;color:var(--muted);font-weight:600}
+.controls{display:flex;justify-content:center;min-height:76px;align-items:flex-start;padding-top:8px}.primary{min-width:190px;height:58px;border-radius:22px;background:linear-gradient(180deg,#83bc8d,#6da879);color:#fff;font-weight:900;font-size:18px;letter-spacing:.04em;box-shadow:0 7px 0 #568b63,0 12px 22px #628d672b;transition:transform .16s}.primary:active{box-shadow:0 3px 0 #568b63;transform:translateY(4px) scale(.97)}.primary:disabled{opacity:.7;cursor:default;box-shadow:0 5px 0 #7d9a7e}.progress{display:inline-grid;place-items:center;vertical-align:middle;width:22px;height:22px;margin-left:8px;border-radius:50%;background:conic-gradient(#fff var(--progress),#ffffff55 0);position:relative}.progress:after{content:"";position:absolute;inset:4px;background:#79af83;border-radius:50%}
+.gift{margin-top:2px;background:transparent;text-decoration:underline;text-underline-offset:3px;color:#819783;font-size:13px;font-weight:700;min-height:44px;padding:8px}
+.footer{text-align:center;font-size:11px;color:#8ba18c;padding-top:2px}
+.overlay{position:fixed;inset:0;background:#3d554999;backdrop-filter:blur(5px);display:none;align-items:flex-end;justify-content:center;z-index:20;padding:14px}.overlay.show{display:flex}.sheet{width:min(100%,440px);max-height:min(82svh,720px);background:#fffdf8;border-radius:28px 28px 22px 22px;padding:22px 18px calc(18px + env(safe-area-inset-bottom));box-shadow:0 20px 70px #314a3d55;animation:sheetIn .28s ease-out;overflow:auto}@keyframes sheetIn{from{transform:translateY(40px);opacity:.6}to{transform:translateY(0);opacity:1}}.sheet-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.sheet h2{font-size:21px;margin:0}.sheet-sub{margin:0 0 16px;color:#829283;font-size:13px}.close{width:44px;height:44px;border-radius:50%;background:#eff5ec;font-size:20px}.collection-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.card{min-height:128px;background:#f4f6ed;border-radius:18px;padding:12px;display:grid;grid-template-columns:54px 1fr;gap:8px;align-items:center}.card .mini{width:54px;height:62px}.card-name{font-weight:900;font-size:14px}.card-desc{font-size:11px;color:#829283;line-height:1.45;margin-top:4px}.card-count{font-size:10px;color:#a0a99e;margin-top:4px}.unknown .mini{filter:grayscale(1);opacity:.24}.unknown .card-name{color:#9ba69b}
+.toast{position:fixed;left:50%;top:calc(15px + env(safe-area-inset-top));transform:translate(-50%,-20px);opacity:0;z-index:30;background:#fffdf5;color:#637e68;padding:12px 18px;border-radius:99px;box-shadow:var(--shadow);font-weight:800;transition:.3s;pointer-events:none}.toast.show{transform:translate(-50%,0);opacity:1}.toast strong{color:#dc9b70}.harvest-fly{position:fixed;z-index:25;font-size:36px;transition:all .65s cubic-bezier(.3,.7,.4,1);pointer-events:none}
+@media(max-height:700px){.scene{min-height:350px}.plant-wrap{transform:scale(.86);bottom:100px}.pot{transform:scale(.9);bottom:52px}.ground{bottom:112px}.caption{min-height:50px}.app{padding-top:calc(8px + env(safe-area-inset-top))}}
+@media(min-width:600px){.app{padding-top:24px;padding-bottom:24px}.scene{min-height:500px}.plant-wrap{bottom:135px}.pot{bottom:76px}.ground{bottom:141px}}
+</style>
+</head>
+<body>
+<main class="app">
+ <header class="topbar"><div class="seed-count" aria-label="种子数量"><span class="seed-icon">🌰</span><span id="seedCount">3</span></div><div class="brand">TINY GARDEN</div><div class="top-actions"><button class="icon-btn" id="soundBtn" aria-label="静音" title="声音开关">🔊</button><button class="pill" id="bookBtn">📖 图鉴</button></div></header>
+ <section class="scene" id="scene" aria-label="小花园">
+   <div class="sun"></div><div class="cloud"></div><div class="hill back"></div><div class="hill"></div>
+   <div class="garden">
+    <div class="ground"></div>
+    <div class="plant-wrap" id="plantWrap"><svg class="plant-svg" viewBox="0 0 200 240" aria-hidden="true" id="plantSvg"><g id="plantArt"></g></svg></div>
+    <svg class="pot" viewBox="0 0 180 120" aria-hidden="true"><ellipse cx="90" cy="23" rx="77" ry="18" fill="#d99572"/><path d="M17 24h146l-13 78q-60 26-120 0z" fill="#e8ad8a"/><path d="M29 46q61 15 122 0" fill="none" stroke="#f3c6a5" stroke-width="5" stroke-linecap="round"/><ellipse cx="90" cy="23" rx="67" ry="12" fill="#795d48"/><ellipse cx="90" cy="22" rx="62" ry="8" fill="#927258" id="soilSurface"/></svg>
+    <div class="particles" id="particles"></div><div class="watering-can" id="wateringCan">🫗</div>
+   </div>
+ </section>
+ <div class="caption" id="caption">种下一颗小小的种子吧 🌱<small>你的花园正在等你</small></div>
+ <div class="controls"><div style="display:grid;justify-items:center"><button class="primary" id="actionBtn">种下</button><button class="gift" id="giftBtn" hidden>领取 1 颗种子</button></div></div>
+ <div class="footer">慢慢来，花会记得阳光 ☀️</div>
+</main>
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="bookTitle"><section class="sheet"><div class="sheet-head"><h2 id="bookTitle">花园图鉴</h2><button class="close" id="closeBook" aria-label="关闭图鉴">×</button></div><p class="sheet-sub" id="bookProgress">收集进度 0 / 8</p><div class="collection-grid" id="collectionGrid"></div></section></div>
+<div class="toast" id="toast"></div>
+<script>
+(()=>{
+const flowers=[
+ {id:"daisy",name:"奶油雏菊",desc:"把小小的晴天带回家。",rarity:"普通",weight:22,color:"#f4d477",shape:8},
+ {id:"rose",name:"莓果玫瑰",desc:"花瓣藏着甜甜的莓果香。",rarity:"普通",weight:16,color:"#ed8c9d",shape:6},
+ {id:"tulip",name:"蜜桃郁金香",desc:"像一盏温柔的小灯。",rarity:"普通",weight:12,color:"#f2a47e",shape:5},
+ {id:"bluebell",name:"雾蓝铃兰",desc:"风经过时会轻轻点头。",rarity:"普通",weight:9,color:"#99b9df",shape:6},
+ {id:"cosmos",name:"晚霞波斯菊",desc:"为傍晚留下一点粉色。",rarity:"普通",weight:11,color:"#d7a2d8",shape:7},
+ {id:"lotus",name:"月光莲",desc:"稀有的月色落进花心。",rarity:"稀有",weight:14,color:"#b4a5e8",shape:9},
+ {id:"sunflower",name:"金盏向日葵",desc:"总朝着最亮的地方生长。",rarity:"稀有",weight:11,color:"#ffbe55",shape:12},
+ {id:"stardust",name:"星屑花",desc:"一颗星星悄悄开在这里。",rarity:"特别",weight:5,color:"#75d5c2",shape:8}
+];
+const initial={seeds:3,collection:{}};
+let saved;try{saved=JSON.parse(localStorage.getItem("tinyGardenSave")||"null")}catch(e){saved=null}
+let data={seeds:Number.isFinite(saved?.seeds)?Math.max(0,saved.seeds):initial.seeds,collection:saved?.collection&&typeof saved.collection==="object"?saved.collection:{}};
+let stage="empty",growthTimer=null,progressTimer=null,muted=false,flowerNow=null,toastTimer=null;
+const $=id=>document.getElementById(id), count=$("seedCount"), action=$("actionBtn"),caption=$("caption"),gift=$("giftBtn");
+function save(){try{localStorage.setItem("tinyGardenSave",JSON.stringify(data))}catch(e){}}
+function paintSeeds(){count.textContent=data.seeds}
+function flowerSVG(f,mini=false){
+ const n=f.shape,cx=mini?27:100,cy=mini?23:78,r=mini?11:25,pr=mini?5.5:14;
+ let petals="";
+ for(let i=0;i<n;i++){const a=360*i/n;petals+=`<ellipse class="petal" cx="${cx}" cy="${cy-r*.63}" rx="${pr*.53}" ry="${pr}" transform="rotate(${a} ${cx} ${cy})" fill="${f.color}" stroke="#ffffff55" stroke-width="1"/>`}
+ return `<g class="${f.rarity==="特别"?"special-glow":""}">${petals}<circle cx="${cx}" cy="${cy}" r="${mini?6:11}" fill="#f7db8c" stroke="#dfa84f" stroke-width="2"/></g>`
+}
+function draw(){
+ const art=$("plantArt");art.innerHTML="";
+ if(stage==="empty"){return}
+ if(stage==="seed"){art.innerHTML='<ellipse class="seed" cx="100" cy="204" rx="10" ry="7"/><path d="M96 204q4-6 8 0" stroke="#c49a71" fill="none" stroke-width="2"/>';return}
+ if(stage==="sprout"){art.innerHTML='<path class="sprout" d="M100 205Q98 173 102 151"/><path class="leaf" d="M101 180Q65 174 69 148Q94 148 101 180Z"/><path class="leaf" d="M101 165Q132 160 136 137Q112 136 101 165Z"/>';return}
+ if(stage==="bud"){art.innerHTML='<path class="stem" d="M100 207Q94 168 100 111"/><path class="leaf" d="M98 179Q63 170 65 148Q91 149 98 179Z"/><path class="leaf" d="M99 163Q131 153 136 131Q111 132 99 163Z"/><path class="bud" d="M100 124C75 112 83 78 100 76C117 78 125 112 100 124Z"/>';return}
+ if(stage==="bloom"){
+  const f=flowerNow;art.innerHTML='<path class="stem" d="M100 207Q92 159 100 100"/><path class="leaf" d="M96 179Q58 168 62 142Q88 145 96 179Z"/><path class="leaf" d="M98 157Q136 147 139 120Q112 124 98 157Z"/><g class="flower open">'+flowerSVG(f)+'</g>';
+  if(f.rarity!=="普通")$("plantWrap").classList.add("special-glow");
+ }
+}
+function update(){
+ paintSeeds();$("plantWrap").classList.remove("special-glow");
+ if(stage==="empty"){draw();caption.innerHTML=data.seeds? '种下一颗小小的种子吧 🌱<small>你的花园正在等你</small>':'今天的种子用完啦<small>领取一颗种子，继续种花</small>';action.textContent="种下";action.disabled=data.seeds<1;gift.hidden=data.seeds>0}
+ if(["seed","sprout","bud"].includes(stage)){draw();caption.innerHTML=stage==="seed"?'小种子住进花盆啦<small>给它一点水和耐心</small>':stage==="sprout"?'发芽啦！好好照顾它<small>每次浇水，它都会长大一点</small>':'花苞正在准备惊喜<small>再浇一次水，花朵就要绽放</small>';action.innerHTML="浇水";action.disabled=false;gift.hidden=true}
+ if(stage==="waiting"){caption.innerHTML='等它长大一下…<small>阳光正暖，马上就好</small>';action.innerHTML='生长中 <span class="progress" id="progress"></span>';action.disabled=true;gift.hidden=true}
+ if(stage==="bloom"){draw();caption.innerHTML='开花啦！好美呀 ✨<small>'+flowerNow.name+' · '+flowerNow.rarity+'花</small>';action.textContent="收获";action.disabled=false;gift.hidden=true}
+}
+function pop(){const el=$("plantWrap");el.classList.remove("pop");void el.offsetWidth;el.classList.add("pop")}
+function chirp(freq=660,dur=.12,type="sine",volume=.045){if(muted)return;try{const ctx=new (window.AudioContext||window.webkitAudioContext)(),o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.setValueAtTime(freq,ctx.currentTime);g.gain.setValueAtTime(volume,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+dur);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+dur);o.onended=()=>ctx.close()}catch(e){}}
+function soundWater(){chirp(1050,.08,"sine",.035);setTimeout(()=>chirp(740,.12,"sine",.03),85)}
+function soundGrow(){chirp(490,.12);setTimeout(()=>chirp(660,.13),90);setTimeout(()=>chirp(820,.18),180)}
+function soundRare(){chirp(680,.28,"triangle",.05);setTimeout(()=>chirp(910,.35,"sine",.055),130);setTimeout(()=>chirp(1220,.4,"sine",.05),260)}
+function particles(){
+ const box=$("particles");box.innerHTML="";
+ for(let i=0;i<12;i++){const p=document.createElement("i");p.className="particle";p.textContent=["✦","·","✧"][i%3];p.style.left=(15+Math.random()*70)+"%";p.style.top=(35+Math.random()*45)+"%";p.style.color=flowerNow.color;p.style.setProperty("--dx",(Math.random()*110-55)+"px");p.style.animationDelay=(Math.random()*.35)+"s";box.append(p)}
+}
+function pickFlower(){let n=Math.random()*100;for(const f of flowers){n-=f.weight;if(n<=0)return f}return flowers[0]}
+function startWater(){
+ if(!["seed","sprout","bud"].includes(stage))return;
+ stage="waiting";update();soundWater();$("scene").classList.add("watering");$("plantWrap").classList.add("sway");
+ for(let i=0;i<5;i++){setTimeout(()=>{const d=document.createElement("span");d.className="droplet";d.textContent="💧";d.style.left=(45+Math.random()*15)+"%";d.style.top="30%";$("scene").append(d);setTimeout(()=>d.remove(),800)},i*90)}
+ const started=Date.now(),duration=5000;
+ progressTimer=setInterval(()=>{const p=$("progress");if(p)p.style.setProperty("--progress",Math.max(0,100-(Date.now()-started)/duration*100)+"%")},80);
+ growthTimer=setTimeout(()=>{clearInterval(progressTimer);$("scene").classList.remove("watering");$("plantWrap").classList.remove("sway");if(stage==="waiting"){stage=stageBeforeWait==="seed"?"sprout":stageBeforeWait==="sprout"?"bud":"bloom";if(stage==="bloom"){flowerNow=pickFlower();draw();particles();if(flowerNow.rarity!=="普通")soundRare();else soundGrow()}else{draw();soundGrow()}pop();update()}},duration);
+}
+let stageBeforeWait="seed";
+function actionClick(){
+ if(stage==="empty"){if(data.seeds<=0)return;data.seeds--;save();stage="seed";update();pop();soundGrow();return}
+ if(["seed","sprout","bud"].includes(stage)){stageBeforeWait=stage;startWater();return}
+ if(stage==="bloom")harvest()
+}
+function harvest(){
+ const f=flowerNow;if(!f)return;
+ const btn=$("bookBtn"),rect=btn.getBoundingClientRect(),plant=$("plantWrap").getBoundingClientRect(),fly=document.createElement("div");fly.className="harvest-fly";fly.textContent="🌸";fly.style.left=(plant.left+plant.width/2-18)+"px";fly.style.top=(plant.top+45)+"px";document.body.append(fly);
+ requestAnimationFrame(()=>{fly.style.left=(rect.left+rect.width/2-15)+"px";fly.style.top=(rect.top+rect.height/2-18)+"px";fly.style.transform="scale(.35) rotate(180deg)";fly.style.opacity=".3"});
+ setTimeout(()=>fly.remove(),750);
+ const known=!!data.collection[f.id];data.collection[f.id]=(data.collection[f.id]||0)+1;const gained=Math.random()<.35?2:1;data.seeds+=gained;save();paintSeeds();chirp(760,.12,"triangle");setTimeout(()=>chirp(1040,.2,"sine"),100);if(navigator.vibrate)try{navigator.vibrate(35)}catch(e){}
+ if(!known)showToast('✨ 新发现！ <strong>'+f.name+'</strong>');else showToast('收获 '+f.name+'，得到 '+gained+' 颗种子');
+ stage="empty";flowerNow=null;setTimeout(()=>{update()},250);
+}
+function showToast(msg){const t=$("toast");t.innerHTML=msg;t.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),2300)}
+function renderBook(){
+ const collected=Object.keys(data.collection).filter(k=>data.collection[k]>0).length;$("bookProgress").textContent='收集进度 '+collected+' / 8';const grid=$("collectionGrid");grid.innerHTML="";
+ flowers.forEach(f=>{const n=data.collection[f.id]||0,card=document.createElement("article");card.className="card"+(n?"":" unknown");card.innerHTML='<svg class="mini" viewBox="0 0 54 62" aria-hidden="true"><path d="M27 55Q25 43 27 31" stroke="#67a273" stroke-width="4" fill="none" stroke-linecap="round"/>'+flowerSVG(f,true)+'</svg><div><div class="card-name">'+(n?f.name:"？？？")+'</div><div class="card-desc">'+(n?f.desc:"还没有遇见这朵花")+'</div><div class="card-count">'+(n?'收获 '+n+' 次':'待发现 · '+f.rarity)+'</div></div>';grid.append(card)})
+}
+action.addEventListener("click",actionClick);
+gift.addEventListener("click",()=>{data.seeds++;save();update();chirp(720,.15);showToast("收到一颗种子 🌱")});
+$("bookBtn").addEventListener("click",()=>{renderBook();$("overlay").classList.add("show")});
+$("closeBook").addEventListener("click",()=>$("overlay").classList.remove("show"));
+$("overlay").addEventListener("click",e=>{if(e.target===$("overlay"))$("overlay").classList.remove("show")});
+$("soundBtn").addEventListener("click",()=>{muted=!muted;$("soundBtn").textContent=muted?"🔇":"🔊";$("soundBtn").setAttribute("aria-label",muted?"开启声音":"静音");if(!muted)chirp(700,.1)});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")$("overlay").classList.remove("show")});
+update();
+})();
+</script>
+</body>
+</html>
